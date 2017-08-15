@@ -192,7 +192,8 @@ then
 	set AUX_MODE pwm
 	set FMU_ARGS ""
 	set MAVLINK_F default
-	set MAVLINK_COMPANION_DEVICE /dev/ttyS2
+	#set MAVLINK_COMPANION_DEVICE /dev/ttyS2
+	set MAVLINK_COMPANION_DEVICE /dev/ttyS3
 	set EXIT_ON_END no
 	set MAV_TYPE none
 	set FAILSAFE none
@@ -662,7 +663,7 @@ then
 
 			if ver hwcmp AEROFC_V1
 			then
-				set MAVLINK_F "-r 1200 -d /dev/ttyS3"
+				set MAVLINK_F "-r 1200 -d /dev/ttyS4"
 			fi
 		fi
 
@@ -691,6 +692,8 @@ then
 		if param compare SYS_COMPANION 10
 		then
 			frsky_telemetry start -d ${MAVLINK_COMPANION_DEVICE}
+			echo caosl-680
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 20
 		then
@@ -699,52 +702,76 @@ then
 		fi
 		if param compare SYS_COMPANION 921600
 		then
-			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 921600 -m onboard -r 80000 -x -f
+			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 921600 -m onboard -r 80000 -x
+			echo caosl-691
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 57600
 		then
-			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 57600 -m onboard -r 5000 -x -f
+			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 57600 -m onboard -r 5000 -x
+			echo caosl-697
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 460800
 		then
-			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 460800 -m onboard -r 5000 -x -f
+			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 460800 -m onboard -r 5000 -x
+			echo caosl-703
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 157600
 		then
 			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 57600 -m osd -r 1000
+			echo caosl-709
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 257600
 		then
-			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 57600 -m magic -r 5000 -x -f
+			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 57600 -m magic -r 5000 -x
+			echo caosl-715
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 319200
 		then
 			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 19200 -r 1000
+			echo caosl-721
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 338400
 		then
 			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 38400 -r 1000
+			echo caosl-727
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 357600
 		then
 			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 57600 -r 1000
+			echo caosl-733
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 3115200
 		then
 			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 115200 -r 1000
+			echo caosl-739
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 419200
 		then
 			iridiumsbd start -d /dev/ttyS2
+			echo caosl-745
+			echo $LINENO
 			mavlink start -d /dev/iridium -b 19200 -m iridium -r 10
 		fi
 		if param compare SYS_COMPANION 1921600
 		then
 			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 921600 -r 20000
+			echo caosl-752
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 		if param compare SYS_COMPANION 1500000
 		then
-			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 1500000 -m onboard -r 10000 -x -f
+			mavlink start -d ${MAVLINK_COMPANION_DEVICE} -b 1500000 -m onboard -r 10000 -x
+			echo caosl-658
+			echo $LINENO ${MAVLINK_COMPANION_DEVICE}
 		fi
 	fi
 
@@ -1048,7 +1075,9 @@ then
 		then
 			# On Pixracer use Telem 2 port (TL2).
 			snapdragon_rc_pwm start -d /dev/ttyS2
-			fmu mode_pwm4 $FMU_ARGS
+			echo caosl-1063
+			echo $LINENO
+			fmu mode_pwm4
 		fi
 
 		pwm failsafe -c 1234 -p 900

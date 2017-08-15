@@ -351,9 +351,10 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 	/* Do we have an uncommitted hard fault in BBSRAM?
 	 *  - this will be reset after a successful commit to SD
 	 */
-	int hadCrash = hardfault_check_status("boot");
+//	int hadCrash = hardfault_check_status("boot");
 
-	if (hadCrash == OK) {
+	if (0)//(hadCrash == OK) 
+	{
 
 		message("[boot] There is a hard fault logged. Hold down the SPACE BAR," \
 			" while booting to halt the system!\n");

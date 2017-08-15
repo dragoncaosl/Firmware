@@ -130,7 +130,7 @@
 
 #define PX4_SPI_BUS_SENSORS          1
 #define PX4_SPI_BUS_RAMTRON          2
-#define PX4_SPI_BUS_BARO             PX4_SPI_BUS_RAMTRON
+#define PX4_SPI_BUS_BARO             1 //PX4_SPI_BUS_RAMTRON
 
 /* Use these in place of the spi_dev_e enumeration to select a specific SPI device on SPI1 */
 #define PX4_SPIDEV_GYRO              1
@@ -156,6 +156,8 @@
 #endif
 
 /* I2C busses */
+#define PX4_I2C_BUS_ONBOARD	 1// 2
+
 #define PX4_I2C_BUS_EXPANSION        1
 #define PX4_I2C_BUS_LED              PX4_I2C_BUS_EXPANSION
 #define PX4_I2C_BUS_BMM150           PX4_I2C_BUS_EXPANSION

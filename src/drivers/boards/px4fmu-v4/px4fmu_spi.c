@@ -128,7 +128,7 @@ __EXPORT void stm32_spi1select(FAR struct spi_dev_s *dev, enum spi_dev_e devid, 
 		break;
 
 	/* Shared PE15 CS devices */
-
+	case PX4_SPIDEV_BARO:
 	case PX4_SPIDEV_HMC:
 	case PX4_SPIDEV_BMI055_GYR:
 		/* Making sure the other peripherals are not selected */
