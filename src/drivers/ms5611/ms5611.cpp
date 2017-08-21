@@ -1061,7 +1061,7 @@ start(enum MS5611_BUS busid, enum MS56XX_DEVICE_TYPES device_type)
 {
 	uint8_t i;
 	bool started = false;
-
+	printf("%s %d %d %d %d \r\n",__FILE__,__LINE__,busid,device_type,NUM_BUS_OPTIONS);
 	for (i = 0; i < NUM_BUS_OPTIONS; i++) {
 		if (busid == MS5611_BUS_ALL && bus_options[i].dev != NULL) {
 			// this device is already started

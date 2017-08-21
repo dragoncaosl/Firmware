@@ -2350,6 +2350,7 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 			ret = -EINVAL;
 			break;
 		}
+		printf("%s %d %d %d\r\n",__FILE__,__LINE__,*(unsigned *)arg,_mode);
 
 		break;
 
@@ -3661,5 +3662,11 @@ extern "C" __EXPORT int fmu_main(int argc, char *argv[]);
 int
 fmu_main(int argc, char *argv[])
 {
+	unsigned int i = 0;
+	printf(" %s %d \r\n",__FILE__,__LINE__);
+	for(i=0;i<argc;i++)
+	{
+		printf(" %s \r\n",argv[i]);
+	}
 	return PX4FMU::main(argc, argv);
 }

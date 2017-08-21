@@ -910,7 +910,7 @@ PX4IO::init()
 	if (circuit_breaker_enabled("CBRK_IO_SAFETY", CBRK_IO_SAFETY_KEY)) {
 		(void)io_reg_set(PX4IO_PAGE_SETUP, PX4IO_P_SETUP_FORCE_SAFETY_OFF, PX4IO_FORCE_SAFETY_MAGIC);
 	}
-
+	printf("%s %d \r\n",__FILE__,__LINE__);
 	/* try to claim the generic PWM output device node as well - it's OK if we fail at this */
 	ret = register_driver(PWM_OUTPUT0_DEVICE_PATH, &fops, 0666, (void *)this);
 
@@ -2750,6 +2750,7 @@ PX4IO::ioctl(file *filep, int cmd, unsigned long arg)
 
 	case PWM_SERVO_GET_COUNT:
 		*(unsigned *)arg = _max_actuators;
+		printf("%s %d %d \r\n",__FILE__,__LINE__,_max_actuators);
 		break;
 
 	case PWM_SERVO_SET_DISABLE_LOCKDOWN:

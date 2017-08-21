@@ -215,6 +215,12 @@ pwm_main(int argc, char *argv[])
 	unsigned long channels;
 	unsigned single_ch = 0;
 	int pwm_value = 0;
+	unsigned int ii = 0;
+	printf(" %s %d \r\n",__FILE__,__LINE__);
+	for(ii=0;ii<argc;ii++)
+	{
+		printf(" %s \r\n",argv[ii]);
+	}
 
 	if (argc < 2) {
 		usage(nullptr);
@@ -223,7 +229,7 @@ pwm_main(int argc, char *argv[])
 
 	int myoptind = 1;
 	const char *myoptarg = nullptr;
-
+    printf("%s %d  \r\n",__FILE__,__LINE__);
 	while ((ch = px4_getopt(argc, argv, "d:vec:g:m:ap:r:", &myoptind, &myoptarg)) != EOF) {
 		switch (ch) {
 
@@ -244,7 +250,6 @@ pwm_main(int argc, char *argv[])
 		case 'e':
 			error_on_warn = true;
 			break;
-
 		case 'c':
 			/* Read in channels supplied as one int and convert to mask: 1234 -> 0xF */
 			channels = strtoul(myoptarg, &ep, 0);
@@ -303,8 +308,10 @@ pwm_main(int argc, char *argv[])
 
 	if (myoptind >= argc) {
 		usage(nullptr);
+		printf("%s %d  \r\n",__FILE__,__LINE__);
 		return 1;
 	}
+	printf("%s %d  \r\n",__FILE__,__LINE__);
 
 	const char *command = argv[myoptind];
 
@@ -320,6 +327,7 @@ pwm_main(int argc, char *argv[])
 
 		printf("\n");
 	}
+	printf("%s %d  %s \r\n",__FILE__,__LINE__,dev);
 
 	/* open for ioctl only */
 	int fd = px4_open(dev, 0);
@@ -332,6 +340,7 @@ pwm_main(int argc, char *argv[])
 	/* get the number of servo channels */
 	unsigned servo_count;
 	ret = px4_ioctl(fd, PWM_SERVO_GET_COUNT, (unsigned long)&servo_count);
+	printf("%s %d  %d \r\n",__FILE__,__LINE__,servo_count);
 
 	if (ret != OK) {
 		PX4_ERR("PWM_SERVO_GET_COUNT");

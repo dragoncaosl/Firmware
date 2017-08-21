@@ -1037,6 +1037,8 @@ MK::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 	case PWM_SERVO_GET_COUNT:
 	case MIXERIOCGETOUTPUTCOUNT:
 		*(unsigned *)arg = _num_outputs;
+		
+		printf("%s %d %d \r\n",__FILE__,__LINE__,*(unsigned *)arg);
 		break;
 
 	case MIXERIOCRESET:

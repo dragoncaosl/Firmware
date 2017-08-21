@@ -96,7 +96,7 @@ extern "C" {
 		int ret = 0;
 		int i;
 		mode_t mode;
-
+		printf("%s %d  \r\n",__FILE__,__LINE__);
 		if (!dev && (flags & (PX4_F_WRONLY | PX4_F_CREAT)) != 0 &&
 		    strncmp(path, "/obj/", 5) != 0 &&
 		    strncmp(path, "/dev/", 5) != 0) {

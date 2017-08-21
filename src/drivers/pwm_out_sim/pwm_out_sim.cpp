@@ -784,7 +784,7 @@ PWMSim::pwm_ioctl(device::file_t *filp, int cmd, unsigned long arg)
 
 			*(unsigned *)arg = 2;
 		}
-
+		printf("%s %d %d %d\r\n",__FILE__,__LINE__,*(unsigned *)arg,_mode);
 		break;
 
 	case MIXERIOCRESET:
@@ -1007,6 +1007,12 @@ pwm_out_sim_main(int argc, char *argv[])
 	PortMode new_mode = PORT_MODE_UNDEFINED;
 	const char *verb;
 	int ret = OK;
+	unsigned int i = 0;
+	printf(" %s %d \r\n",__FILE__,__LINE__);
+	for(i=0;i<argc;i++)
+	{
+		printf(" %s \r\n",argv[i]);
+	}
 
 	if (argc < 2) {
 		usage();

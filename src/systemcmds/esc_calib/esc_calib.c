@@ -97,7 +97,7 @@ esc_calib_main(int argc, char *argv[])
 	int ch;
 	int ret;
 	char c;
-
+	unsigned int ii = 0;
 	unsigned max_channels = 0;
 
 	uint32_t set_mask = 0;
@@ -110,7 +110,11 @@ esc_calib_main(int argc, char *argv[])
 	struct pollfd fds;
 	fds.fd = 0; /* stdin */
 	fds.events = POLLIN;
-
+	printf(" %s %d \r\n",__FILE__,__LINE__);
+	for(ii=0;ii<argc;ii++)
+	{
+		printf(" %s \r\n",argv[ii]);
+	}
 	if (argc < 2) {
 		usage("no channels provided");
 		return 1;
