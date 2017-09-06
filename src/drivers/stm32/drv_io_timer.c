@@ -126,7 +126,7 @@
 #define CCER_C1_INIT  GTIM_CCER_CC1E
 #endif
 //												 				  NotUsed   PWMOut  PWMIn Capture OneShot Trigger
-io_timer_channel_allocation_t channel_allocations[IOTimerChanModeSize] = { UINT8_MAX,   0,  0,  0, 0, 0 };
+io_timer_channel_allocation_t channel_allocations[IOTimerChanModeSize] = { UINT16_MAX,   0,  0,  0, 0, 0 };
 
 typedef uint8_t io_timer_allocation_t; /* big enough to hold MAX_IO_TIMERS */
 
@@ -895,7 +895,7 @@ uint16_t io_channel_get_ccr(unsigned channel)
 
 	if (io_timer_validate_channel_index(channel) == 0) {
 		int mode = io_timer_get_channel_mode(channel);
-
+		printf("%s %d %d %d \r\n",__FILE__,__LINE__,channel,mode);
 		if ((mode == IOTimerChanMode_PWMOut) ||
 		    (mode == IOTimerChanMode_OneShot) ||
 		    (mode == IOTimerChanMode_Trigger)) {

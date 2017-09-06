@@ -56,7 +56,7 @@
 /* LEDs */
 
 #define GPIO_LED1                    (GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN11)
-#define GPIO_LED2                    (GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN1)
+#define GPIO_LED2                    (GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN4)//GPIO_PORTB|GPIO_PIN1)
 #define GPIO_LED3                    (GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN3)
 
 #define GPIO_LED_RED                 GPIO_LED1
@@ -280,7 +280,7 @@
 #define HRT_TIMER_CHANNEL            4   /* use capture/compare channel 4 */
 
 #define HRT_PPM_CHANNEL              3    /* use capture/compare channel 3 */
-#define GPIO_PPM_IN                  (GPIO_ALT|GPIO_AF2|GPIO_PULLUP|GPIO_PORTB|GPIO_PIN0)
+#define GPIO_PPM_IN                 (GPIO_ALT|GPIO_AF2|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN5)//GPIO_PORTB|GPIO_PIN0)
 
 #define RC_SERIAL_PORT               "/dev/ttyS4"
 
@@ -316,7 +316,7 @@
  * The FMU can drive  GPIO PPM_IN as an output
  */
 
-#define GPIO_PPM_IN_AS_OUT           (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN0)
+#define GPIO_PPM_IN_AS_OUT          (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTC|GPIO_PIN5)//GPIO_PORTB|GPIO_PIN0)
 #define SPEKTRUM_RX_AS_GPIO_OUTPUT() px4_arch_configgpio(GPIO_PPM_IN_AS_OUT)
 #define SPEKTRUM_RX_AS_UART()       /* Can be left as uart */
 #define SPEKTRUM_OUT(_one_true)      px4_arch_gpiowrite(GPIO_PPM_IN_AS_OUT, (_one_true))

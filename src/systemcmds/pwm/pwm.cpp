@@ -653,7 +653,7 @@ pwm_main(int argc, char *argv[])
 		return 0;
 
 	} else if (!strcmp(command, "test")) {
-
+		printf("%s %d %d %d %d \r\n",__FILE__,__LINE__,set_mask,pwm_value,servo_count);
 		if (set_mask == 0) {
 			usage("no channels set");
 			return 1;
