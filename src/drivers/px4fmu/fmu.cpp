@@ -151,6 +151,7 @@ public:
 		MODE_4CAP,
 		MODE_5CAP,
 		MODE_6CAP,
+		MODE_10PWM,
 	};
 	PX4FMU(bool run_as_task);
 	virtual ~PX4FMU();
@@ -644,6 +645,7 @@ PX4FMU::set_mode(Mode mode)
 	 * listening and mixing; the mode just selects which of the channels
 	 * are presented on the output pins.
 	 */
+	printf("%s %d %d \r\n",__FILE__,__LINE__,mode);
 	switch (mode) {
 	case MODE_1PWM:
 		/* default output rates */
@@ -742,6 +744,20 @@ PX4FMU::set_mode(Mode mode)
 		_num_outputs = 8;
 
 		break;
+#endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
+	
+		case MODE_10PWM: // AeroCore PWMs as 8 PWM outs
+			DEVICE_DEBUG("MODE_10PWM");
+			/* default output rates */
+			_pwm_default_rate = 50;
+			_pwm_alt_rate = 50;
+			_pwm_alt_rate_channels = 0;
+			_pwm_mask = 0x3ff;
+			_pwm_initialized = false;
+			_num_outputs = 10;
+	
+			break;
 #endif
 
 	case MODE_NONE:
@@ -1875,17 +1891,22 @@ PX4FMU::ioctl(file *filp, int cmd, unsigned long arg)
 
 	/* try it as a GPIO ioctl first */
 	ret = gpio_ioctl(filp, cmd, arg);
-
+//	printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
 	if (ret != -ENOTTY) {
+		printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
 		return ret;
 	}
 
 	/* try it as a Capture ioctl next */
 	ret = capture_ioctl(filp, cmd, arg);
+//	printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
 
 	if (ret != -ENOTTY) {
+		printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
 		return ret;
 	}
+	
+//	printf("%s %d %d \r\n",__FILE__,__LINE__,_mode);
 
 	/* if we are in valid PWM mode, try it as a PWM ioctl as well */
 	switch (_mode) {
@@ -1901,7 +1922,13 @@ PX4FMU::ioctl(file *filp, int cmd, unsigned long arg)
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 8
 	case MODE_8PWM:
 #endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
+			case MODE_10PWM:
+#endif
+
 		ret = pwm_ioctl(filp, cmd, arg);
+	//	printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
+
 		break;
 
 	default:
@@ -1911,8 +1938,11 @@ PX4FMU::ioctl(file *filp, int cmd, unsigned long arg)
 
 	/* if nobody wants it, let CDev have it */
 	if (ret == -ENOTTY) {
+		
 		ret = CDev::ioctl(filp, cmd, arg);
+		printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
 	}
+//	printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
 
 	return ret;
 }
@@ -1923,6 +1953,7 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 	int ret = OK;
 
 	PX4_DEBUG("fmu ioctl cmd: %d, arg: %ld", cmd, arg);
+//	printf("%s %d %d \r\n",__FILE__,__LINE__,cmd);
 
 	lock();
 
@@ -2197,6 +2228,18 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 			arg = (unsigned long)&pwm;
 			break;
 		}
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
+	
+		case PWM_SERVO_SET(9):
+	
+		/* FALLTHROUGH */
+		case PWM_SERVO_SET(8):
+			if (_mode < MODE_10PWM) {
+				ret = -EINVAL;
+				break;
+			}
+	
+#endif
 
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 8
 
@@ -2250,6 +2293,17 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 		}
 
 		break;
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
+		
+			/* FALLTHROUGH */
+			case PWM_SERVO_GET(9):
+			case PWM_SERVO_GET(8):
+				if (_mode < MODE_10PWM) {
+					ret = -EINVAL;
+					break;
+				}
+		
+#endif
 
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 8
 
@@ -2307,12 +2361,23 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 	case PWM_SERVO_GET_RATEGROUP(6):
 	case PWM_SERVO_GET_RATEGROUP(7):
 #endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
+			case PWM_SERVO_GET_RATEGROUP(8):
+			case PWM_SERVO_GET_RATEGROUP(9):
+#endif
+
 		*(uint32_t *)arg = up_pwm_servo_get_rate_group(cmd - PWM_SERVO_GET_RATEGROUP(0));
 		break;
 
 	case PWM_SERVO_GET_COUNT:
 	case MIXERIOCGETOUTPUTCOUNT:
 		switch (_mode) {
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
+			
+					case MODE_10PWM:
+						*(unsigned *)arg = 10;
+						break;
+#endif
 
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 8
 
@@ -2362,6 +2427,7 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 			 * changing a set of pins to be used for serial on
 			 * FMUv1
 			 */
+			printf("%s %d %d \r\n",__FILE__,__LINE__,arg);
 			switch (arg) {
 			case 0:
 				set_mode(MODE_NONE);
@@ -2396,6 +2462,12 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 				set_mode(MODE_8PWM);
 				break;
 #endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >=10
+			
+						case 10:
+							set_mode(MODE_10PWM);
+							break;
+#endif
 
 			default:
 				ret = -EINVAL;
@@ -2406,6 +2478,7 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 		}
 
 	case PWM_SERVO_SET_MODE: {
+		    printf("%s %d %d \r\n",__FILE__,__LINE__,arg);
 			switch (arg) {
 			case PWM_SERVO_MODE_NONE:
 				ret = set_mode(MODE_NONE);
@@ -2454,6 +2527,10 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 			case PWM_SERVO_MODE_6CAP:
 				ret = set_mode(MODE_6CAP);
 				break;
+				case PWM_SERVO_MODE_10PWM:
+					ret = set_mode(MODE_10PWM);
+					break;
+
 
 			default:
 				ret = -EINVAL;
@@ -3010,6 +3087,10 @@ PX4FMU::fmu_new_mode(PortMode new_mode)
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM == 8
 		servo_mode = PX4FMU::MODE_8PWM;
 #endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM == 10
+				servo_mode = PX4FMU::MODE_10PWM;
+#endif
+
 		break;
 
 	case PORT_RC_IN:
@@ -3100,6 +3181,7 @@ PX4FMU::fmu_new_mode(PortMode new_mode)
 		}
 
 		/* (re)set the PWM output mode */
+		printf(" %s %d %d \r\n",__FILE__,__LINE__,servo_mode);
 		object->set_mode(servo_mode);
 	}
 

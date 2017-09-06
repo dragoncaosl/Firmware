@@ -70,6 +70,7 @@ int up_pwm_servo_set(unsigned channel, servo_position_t value)
 
 servo_position_t up_pwm_servo_get(unsigned channel)
 {
+	printf("%s %d %d \r\n",__FILE__,__LINE__,channel);
 	return io_channel_get_ccr(channel);
 }
 

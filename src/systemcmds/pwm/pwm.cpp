@@ -340,7 +340,7 @@ pwm_main(int argc, char *argv[])
 	/* get the number of servo channels */
 	unsigned servo_count;
 	ret = px4_ioctl(fd, PWM_SERVO_GET_COUNT, (unsigned long)&servo_count);
-	printf("%s %d  %d \r\n",__FILE__,__LINE__,servo_count);
+	printf("%s %d %d %d \r\n",__FILE__,__LINE__,ret,servo_count);
 
 	if (ret != OK) {
 		PX4_ERR("PWM_SERVO_GET_COUNT");

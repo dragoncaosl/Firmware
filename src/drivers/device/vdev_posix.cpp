@@ -242,15 +242,16 @@ extern "C" {
 
 		if (dev) {
 			ret = dev->ioctl(filemap[fd], cmd, arg);
-
+			printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
 		} else {
 			ret = -EINVAL;
+			printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
 		}
 
 		if (ret < 0) {
 			px4_errno = -ret;
 		}
-
+		printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
 		return ret;
 	}
 

@@ -46,7 +46,7 @@
 __BEGIN_DECLS
 /* configuration limits */
 #define MAX_IO_TIMERS			5
-#define MAX_TIMER_IO_CHANNELS	8
+#define MAX_TIMER_IO_CHANNELS	10
 
 #define MAX_LED_TIMERS			2
 #define MAX_TIMER_LED_CHANNELS	6

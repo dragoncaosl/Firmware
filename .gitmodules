@@ -1,42 +1,56 @@
 [submodule "mavlink/include/mavlink/v1.0"]
 	path = mavlink/include/mavlink/v1.0
 	url = https://github.com/mavlink/c_library_v1.git
+	ignore = dirty
 [submodule "mavlink/include/mavlink/v2.0"]
 	path = mavlink/include/mavlink/v2.0
 	url = https://github.com/mavlink/c_library_v2.git
+	ignore = dirty
 [submodule "NuttX"]
 	path = NuttX
 	url = https://github.com/PX4/PX4NuttX.git
+	ignore = dirty
 [submodule "src/modules/uavcan/libuavcan"]
 	path = src/modules/uavcan/libuavcan
 	url = https://github.com/UAVCAN/libuavcan.git
+	ignore = dirty
 [submodule "Tools/genmsg"]
 	path = Tools/genmsg
 	url = https://github.com/ros/genmsg.git
+	ignore = dirty
 [submodule "Tools/gencpp"]
 	path = Tools/gencpp
 	url = https://github.com/ros/gencpp.git
+	ignore = dirty
 [submodule "Tools/jMAVSim"]
 	path = Tools/jMAVSim
 	url = https://github.com/PX4/jMAVSim.git
+	ignore = dirty
 [submodule "Tools/sitl_gazebo"]
 	path = Tools/sitl_gazebo
 	url = https://github.com/PX4/sitl_gazebo.git
+	ignore = dirty
 [submodule "src/lib/matrix"]
 	path = src/lib/matrix
 	url = https://github.com/PX4/Matrix.git
+	ignore = dirty
 [submodule "src/lib/DriverFramework"]
 	path = src/lib/DriverFramework
 	url = https://github.com/PX4/DriverFramework.git
+	ignore = dirty
 [submodule "src/lib/ecl"]
 	path = src/lib/ecl
 	url = https://github.com/PX4/ecl.git
+	ignore = dirty
 [submodule "cmake/cmake_hexagon"]
 	path = cmake/cmake_hexagon
 	url = https://github.com/ATLFlight/cmake_hexagon
+	ignore = dirty
 [submodule "src/drivers/gps/devices"]
 	path = src/drivers/gps/devices
 	url = https://github.com/PX4/GpsDrivers.git
+	ignore = dirty
 [submodule "src/lib/micro-CDR"]
 	path = src/lib/micro-CDR
 	url = https://github.com/eProsima/micro-CDR.git
+	ignore = dirty
