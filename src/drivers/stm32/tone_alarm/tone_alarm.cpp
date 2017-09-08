@@ -585,6 +585,7 @@ ToneAlarm::start_note(unsigned note)
 
 	// calculate the timer period for the selected prescaler value
 	unsigned period = (divisor / (prescale + 1)) - 1;
+//	printf("%s %d %d %d  \r\n",__FILE__,__LINE__,period ,prescale);
 
 	rPSC = prescale;	// load new prescaler
 	rARR = period;		// load new toggle period

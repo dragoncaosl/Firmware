@@ -312,13 +312,15 @@ Sensors::parameters_update()
 int
 Sensors::adc_init()
 {
+	printf("caosl %s %d \r\n",__FILE__,__LINE__);
 	DevMgr::getHandle(ADC0_DEVICE_PATH, _h_adc);
 
 	if (!_h_adc.isValid()) {
 		PX4_ERR("no ADC found: %s (%d)", ADC0_DEVICE_PATH, _h_adc.getError());
+		printf("caosl %s %d \r\n",__FILE__,__LINE__);
 		return PX4_ERROR;
 	}
-
+	printf("caosl %s %d \r\n",__FILE__,__LINE__);
 	return OK;
 }
 
@@ -423,6 +425,7 @@ Sensors::adc_poll(struct sensor_combined_s &raw)
 	if (_hil_enabled) {
 		return;
 	}
+	
 
 	hrt_abstime t = hrt_absolute_time();
 
@@ -432,6 +435,7 @@ Sensors::adc_poll(struct sensor_combined_s &raw)
 		px4_adc_msg_t buf_adc[PX4_MAX_ADC_CHANNELS];
 		/* read all channels available */
 		int ret = _h_adc.read(&buf_adc, sizeof(buf_adc));
+	//	printf("caosl %s %d \r\n",__FILE__,__LINE__);
 
 		//todo:abosorb into new class Power
 

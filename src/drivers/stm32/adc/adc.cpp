@@ -167,7 +167,7 @@ ADC::ADC(uint32_t channels) :
 			_channel_count++;
 		}
 	}
-
+	printf("%s %d %d \r\n",__FILE__,__LINE__,_channel_count);
 	if (_channel_count > PX4_MAX_ADC_CHANNELS) {
 		PX4_ERR("PX4_MAX_ADC_CHANNELS is too small:is %d needed:%d", PX4_MAX_ADC_CHANNELS, _channel_count);
 	}
@@ -506,9 +506,13 @@ test(void)
 int
 adc_main(int argc, char *argv[])
 {
+	
+	
+
 	if (g_adc == nullptr) {
 		/* XXX this hardcodes the default channel set for the board in board_config.h - should be configurable */
 		g_adc = new ADC(ADC_CHANNELS);
+		
 
 		if (g_adc == nullptr) {
 			errx(1, "couldn't allocate the ADC driver");
@@ -519,6 +523,7 @@ adc_main(int argc, char *argv[])
 			errx(1, "ADC init failed");
 		}
 	}
+	printf("%s %d  \r\n",__FILE__,__LINE__);
 
 	if (argc > 1) {
 		if (!strcmp(argv[1], "test")) {

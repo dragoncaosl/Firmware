@@ -455,6 +455,7 @@ static int allocate_channel(unsigned channel, io_timer_channel_mode_t mode)
 
 static int timer_set_rate(unsigned timer, unsigned rate)
 {
+	printf("%s %d %d %d \r\n",__FILE__,__LINE__,timer,rate);
 
 	/* configure the timer to update at the desired rate */
 	rARR(timer) = BOARD_PWM_FREQ / rate;
@@ -477,6 +478,7 @@ static inline void io_timer_set_oneshot_mode(unsigned timer)
 	 *  On 16 bit timers this is 8.1 Ms.
 	 *  On 32 but timers this is 536870.912
 	 */
+	printf("%s %d %d %d %d \r\n",__FILE__,__LINE__,timer,io_timers[timer].clock_freq,(io_timers[timer].clock_freq / BOARD_PWM_FREQ) - 1);
 
 	rARR(timer) = 0xffffffff;
 	rPSC(timer) = (io_timers[timer].clock_freq / BOARD_ONESHOT_FREQ) - 1;
@@ -485,6 +487,7 @@ static inline void io_timer_set_oneshot_mode(unsigned timer)
 
 static inline void io_timer_set_PWM_mode(unsigned timer)
 {
+	printf("%s %d %d %d %d \r\n",__FILE__,__LINE__,timer,io_timers[timer].clock_freq,(io_timers[timer].clock_freq / BOARD_PWM_FREQ) - 1);
 	rPSC(timer) = (io_timers[timer].clock_freq / BOARD_PWM_FREQ) - 1;
 }
 
@@ -535,6 +538,7 @@ int io_timer_init_timer(unsigned timer)
 		/* enable the timer clock before we try to talk to it */
 
 		modifyreg32(io_timers[timer].clock_register, 0, io_timers[timer].clock_bit);
+		printf(" %s %d %d \r\n",__FILE__,__LINE__,timer);
 
 		/* disable and configure the timer */
 		rCR1(timer) = 0;
@@ -554,7 +558,7 @@ int io_timer_init_timer(unsigned timer)
 		if ((io_timers[timer].base == STM32_TIM1_BASE) || (io_timers[timer].base == STM32_TIM8_BASE)) {
 
 			/* master output enable = on */
-
+			printf(" %s %d %d \r\n",__FILE__,__LINE__,timer);
 			rBDTR(timer) = ATIM_BDTR_MOE;
 		}
 
@@ -881,7 +885,7 @@ int io_timer_set_ccr(unsigned channel, uint16_t value)
 		} else {
 
 			/* configure the channel */
-
+		//	printf("%s %d %d %d \r\n",__FILE__,__LINE__,channel,value);
 			REG(channels_timer(channel), timer_io_channels[channel].ccr_offset) = value;
 		}
 	}

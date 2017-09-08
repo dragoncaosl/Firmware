@@ -425,6 +425,7 @@ hrt_tim_init(void)
 	rCCMR2 = CCMR2_PPM;
 	rCCER = CCER_PPM;
 	rDCR = 0;
+//	printf("%s %d %d \r\n",__FILE__,__LINE__,(HRT_TIMER_CLOCK / 1000000) - 1);
 
 	/* configure the timer to free-run at 1MHz */
 	rPSC = (HRT_TIMER_CLOCK / 1000000) - 1;	/* this really only works for whole-MHz clocks */

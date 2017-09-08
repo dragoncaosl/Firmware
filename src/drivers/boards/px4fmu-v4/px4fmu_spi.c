@@ -98,6 +98,7 @@ __EXPORT void stm32_spiinitialize(int mask)
 #endif
 
 }
+#ifdef CONFIG_STM32_SPI1
 
 __EXPORT void stm32_spi1select(FAR struct spi_dev_s *dev, enum spi_dev_e devid, bool selected)
 {
@@ -146,6 +147,7 @@ __EXPORT uint8_t stm32_spi1status(FAR struct spi_dev_s *dev, enum spi_dev_e devi
 {
 	return SPI_STATUS_PRESENT;
 }
+#endif
 
 
 #ifdef CONFIG_STM32_SPI2

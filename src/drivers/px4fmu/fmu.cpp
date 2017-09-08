@@ -152,6 +152,8 @@ public:
 		MODE_5CAP,
 		MODE_6CAP,
 		MODE_10PWM,
+		MODE_12PWM,
+		MODE_16PWM,
 	};
 	PX4FMU(bool run_as_task);
 	virtual ~PX4FMU();
@@ -745,6 +747,7 @@ PX4FMU::set_mode(Mode mode)
 
 		break;
 #endif
+
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
 	
 		case MODE_10PWM: // AeroCore PWMs as 8 PWM outs
@@ -758,6 +761,34 @@ PX4FMU::set_mode(Mode mode)
 			_num_outputs = 10;
 	
 			break;
+#endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 12
+		
+			case MODE_12PWM: // AeroCore PWMs as 8 PWM outs
+				DEVICE_DEBUG("MODE_12PWM");
+				/* default output rates */
+				_pwm_default_rate = 50;
+				_pwm_alt_rate = 50;
+				_pwm_alt_rate_channels = 0;
+				_pwm_mask = 0xfff;
+				_pwm_initialized = false;
+				_num_outputs = 12;
+		
+				break;
+#endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 16
+			
+				case MODE_16PWM: // AeroCore PWMs as 8 PWM outs
+					DEVICE_DEBUG("MODE_16PWM");
+					/* default output rates */
+					_pwm_default_rate = 50;
+					_pwm_alt_rate = 50;
+					_pwm_alt_rate_channels = 0;
+					_pwm_mask = 0xffff;
+					_pwm_initialized = false;
+					_num_outputs = 16;
+			
+					break;
 #endif
 
 	case MODE_NONE:
@@ -855,6 +886,8 @@ PX4FMU::set_pwm_rate(uint32_t rate_map, unsigned default_rate, unsigned alt_rate
 			} else {
 				// set it - errors here are unexpected
 				if (alt != 0) {
+					
+					printf("%s %d %d %d %d %d \r\n",__FILE__,__LINE__,alt,mask,group,_max_actuators);
 					if (up_pwm_servo_set_rate_group_update(group, alt_rate) != OK) {
 						PX4_WARN("rate group set alt failed");
 						return -EINVAL;
@@ -1196,6 +1229,7 @@ PX4FMU::update_pwm_out_state(bool on)
 {
 	if (on && !_pwm_initialized && _pwm_mask != 0) {
 		up_pwm_servo_init(_pwm_mask);
+		printf(" %s %d %d %d %d \r\n",__FILE__,__LINE__,_pwm_alt_rate_channels,_pwm_default_rate,_pwm_alt_rate);
 		set_pwm_rate(_pwm_alt_rate_channels, _pwm_default_rate, _pwm_alt_rate);
 		_pwm_initialized = true;
 	}
@@ -1925,6 +1959,12 @@ PX4FMU::ioctl(file *filp, int cmd, unsigned long arg)
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
 			case MODE_10PWM:
 #endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 12
+			case MODE_12PWM:
+#endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 16
+			case MODE_16PWM:
+#endif
 
 		ret = pwm_ioctl(filp, cmd, arg);
 	//	printf("%s %d %d \r\n",__FILE__,__LINE__,ret);
@@ -2209,7 +2249,7 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 				ret = -EINVAL;
 				break;
 			}
-
+			printf("%s %d %d %d \r\n",__FILE__,__LINE__,(int16_t *)pwm->values,pwm->channel_count);
 			/* copy the trim values to the mixer offsets */
 			_mixers->set_trims((int16_t *)pwm->values, pwm->channel_count);
 			PX4_DEBUG("set_trims: %d, %d, %d, %d", pwm->values[0], pwm->values[1], pwm->values[2], pwm->values[3]);
@@ -2228,6 +2268,30 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 			arg = (unsigned long)&pwm;
 			break;
 		}
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 16
+		case PWM_SERVO_SET(15):
+		case PWM_SERVO_SET(14):
+		case PWM_SERVO_SET(13):
+		/* FALLTHROUGH */
+		case PWM_SERVO_SET(12):
+			if (_mode < MODE_16PWM) {
+				ret = -EINVAL;
+				break;
+			}
+	
+#endif	
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 12
+	
+		case PWM_SERVO_SET(11):
+	
+		/* FALLTHROUGH */
+		case PWM_SERVO_SET(10):
+			if (_mode < MODE_12PWM) {
+				ret = -EINVAL;
+				break;
+			}
+	
+#endif	
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
 	
 		case PWM_SERVO_SET(9):
@@ -2293,6 +2357,30 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 		}
 
 		break;
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 16
+
+	/* FALLTHROUGH */
+	case PWM_SERVO_GET(15):
+	case PWM_SERVO_GET(14):
+	case PWM_SERVO_GET(13):
+	case PWM_SERVO_GET(12):
+		if (_mode < MODE_16PWM) {
+			ret = -EINVAL;
+			break;
+		}
+
+#endif		
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 12
+
+	/* FALLTHROUGH */
+	case PWM_SERVO_GET(11):
+	case PWM_SERVO_GET(10):
+		if (_mode < MODE_12PWM) {
+			ret = -EINVAL;
+			break;
+		}
+
+#endif
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
 		
 			/* FALLTHROUGH */
@@ -2362,8 +2450,18 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 	case PWM_SERVO_GET_RATEGROUP(7):
 #endif
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
-			case PWM_SERVO_GET_RATEGROUP(8):
-			case PWM_SERVO_GET_RATEGROUP(9):
+	case PWM_SERVO_GET_RATEGROUP(8):
+	case PWM_SERVO_GET_RATEGROUP(9):
+#endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 12
+	case PWM_SERVO_GET_RATEGROUP(10):
+	case PWM_SERVO_GET_RATEGROUP(11):
+#endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 16
+			case PWM_SERVO_GET_RATEGROUP(12):
+			case PWM_SERVO_GET_RATEGROUP(13):
+			case PWM_SERVO_GET_RATEGROUP(14):
+			case PWM_SERVO_GET_RATEGROUP(15):
 #endif
 
 		*(uint32_t *)arg = up_pwm_servo_get_rate_group(cmd - PWM_SERVO_GET_RATEGROUP(0));
@@ -2372,6 +2470,18 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 	case PWM_SERVO_GET_COUNT:
 	case MIXERIOCGETOUTPUTCOUNT:
 		switch (_mode) {
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 16
+						
+					case MODE_16PWM:
+						*(unsigned *)arg = 16;
+						break;
+#endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 12
+			
+					case MODE_12PWM:
+						*(unsigned *)arg = 12;
+						break;
+#endif			
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >= 10
 			
 					case MODE_10PWM:
@@ -2468,6 +2578,18 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 							set_mode(MODE_10PWM);
 							break;
 #endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >=12
+						
+						case 12:
+							set_mode(MODE_12PWM);
+							break;
+#endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM >=16
+									
+						case 16:
+							set_mode(MODE_16PWM);
+							break;
+#endif
 
 			default:
 				ret = -EINVAL;
@@ -2527,9 +2649,15 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 			case PWM_SERVO_MODE_6CAP:
 				ret = set_mode(MODE_6CAP);
 				break;
-				case PWM_SERVO_MODE_10PWM:
-					ret = set_mode(MODE_10PWM);
-					break;
+			case PWM_SERVO_MODE_10PWM:
+				ret = set_mode(MODE_10PWM);
+				break;
+			case PWM_SERVO_MODE_12PWM:
+				ret = set_mode(MODE_12PWM);
+				break;
+			case PWM_SERVO_MODE_16PWM:
+				ret = set_mode(MODE_16PWM);
+				break;
 
 
 			default:
@@ -3089,6 +3217,12 @@ PX4FMU::fmu_new_mode(PortMode new_mode)
 #endif
 #if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM == 10
 				servo_mode = PX4FMU::MODE_10PWM;
+#endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM == 12
+				servo_mode = PX4FMU::MODE_12PWM;
+#endif
+#if defined(BOARD_HAS_PWM) && BOARD_HAS_PWM == 16
+				servo_mode = PX4FMU::MODE_16PWM;
 #endif
 
 		break;
